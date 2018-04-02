@@ -2,6 +2,10 @@
 
 ApkV2ChannelTools是基于Python3实现的，可对使用了Signature Scheme v2进行签名的apk添加一些额外信息的工具脚本，当前用于对v2签名apk添加渠道信息，其主要实现原理是在apk的signing block上添加上对应的key-value，从而达到添加额外信息的效果；需注意的是signing block上保存的key仅可以为4byte的数据。
 
+##### Depends On
+
+* [Python3](https://www.python.org/download/releases/3.0/) (>= 3.6)
+
 ###### **Getting started**
 
 ```shell
