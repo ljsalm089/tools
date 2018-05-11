@@ -1,0 +1,27 @@
+# 匹配以.开头的文件夹或文件，*nix下的隐藏文件或文件夹
+^\.(.+)
+# 匹配以_开头的文件或文件夹
+^_(.+)
+# 匹配build文件或文件夹
+build
+# 匹配 .txt后缀的文件
+^(.+)\.txt$
+# 匹配 .py后缀的文件
+^(.+)\.py$
+aidl
+java
+jniLibs
+^(.+)\.xml
+^(.+)\.9\.png
+^(.+)\.mp4
+^(.+)\.properties
+anim
+animator
+color
+layout
+menu
+raw
+values*
+xml
+assets
+*.txt
