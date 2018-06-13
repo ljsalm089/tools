@@ -4,7 +4,7 @@ ImageOptimize 是基于Python3实现的，可对文件目录中的jpg和png图�
 
 ##### Depends On
 
-* [Python3](https://www.python.org/download/releases/3.0/) (>= 3.4)
+* [Python3](https://www.python.org/download/releases/3.0/) (>= 3.5)
 * [Pillow](https://pypi.python.org/pypi/Pillow/5.0.0) (>= 5.0.0)
 * [Piexif](https://pypi.python.org/pypi/piexif) (>=1.1.0)
 * [Requests](https://pypi.python.org/pypi/requests) (>=2.18.0)
@@ -19,3 +19,7 @@ python3 ./optimizemain.py --token=<tokenFile> [--path=<path>] [--ignore=<ignoreF
 * tokenFile：保存从[Tiny](https://tinypng.com/developers)上注册的token，一行一个，以 '#'开头的行为注释
 * path：需要扫描的根目录
 * ignoreFile：需要忽略文件或文件夹的配置列表，一行为一个规则，支持正则表达式，以 '#'开头的行为注释
+
+##### 实现说明
+
+[批量图片压缩实现](https://ljsalm089.github.io/2018/04/23/%E6%89%B9%E9%87%8F%E5%9B%BE%E7%89%87%E5%8E%8B%E7%BC%A9%E5%AE%9E%E7%8E%B0/)
