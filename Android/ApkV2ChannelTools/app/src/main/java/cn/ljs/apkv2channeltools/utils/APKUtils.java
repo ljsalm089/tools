@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.charset.Charset;
 
 /**
  * <p> Description: APK 解析相关工具方法</p>
@@ -75,6 +76,41 @@ public class APKUtils {
         }
     }
 
+    /**
+     * 获取签名信息里面的额外内容
+     * @param context 对应上下文
+     * @param key 额外内容所对应的key
+     * @return 返回额外内容信息
+     */
+    public static String getApkExtraInfo(Context context, String key) {
+        return getApkExtraInfoInSignatureBlock(context.getApplicationInfo().sourceDir,
+                convertStringToId(key));
+    }
+
+
+    private static int convertStringToId(String key) {
+        if (null == key) {
+            throw  new NullPointerException("key should not be null");
+        }
+
+        byte[] data = key.getBytes(Charset.forName("utf-8"));
+
+        int result = 0x00;
+
+        int shiftIndex = 0;
+        while (shiftIndex < 4 && shiftIndex < data.length) {
+            result |= (data[shiftIndex] << ((3 - shiftIndex) * 8));
+            shiftIndex ++;
+        }
+        return result;
+    }
+
+    /**
+     * 从apk的v2签名块中获取额外信息
+     * @param file 对应apk文件
+     * @param signId 对应存储额外信息的id
+     * @return 返回存储的额外信息
+     */
     private static String getApkExtraInfoInSignatureBlock(String file, int signId) {
         File apkFile = new File(file);
         String result = null;
@@ -352,7 +388,7 @@ public class APKUtils {
         }
     }
 
-    private static class ApkExtraInfoNotFoundException extends RuntimeException {
+    public static class ApkExtraInfoNotFoundException extends RuntimeException {
 
         public ApkExtraInfoNotFoundException() {
             super();
