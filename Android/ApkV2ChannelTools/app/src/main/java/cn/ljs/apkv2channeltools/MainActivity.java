@@ -8,6 +8,7 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import java.nio.charset.Charset;
 
 import cn.ljs.apkv2channeltools.utils.APKUtils;
 
