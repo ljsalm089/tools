@@ -18,6 +18,7 @@ logging.basicConfig(level=logging.INFO, format='%(levelname)s\t\t%(asctime)s'
 
 local_reader = threading.local()
 
+_const_mark = b'mark&tiny'
 
 class PathFilter(object):
 
@@ -87,7 +88,7 @@ def optimize_files(list):
     while index < len(list):
         try:
             origin_file = list[index]
-            mark_sign = b'mark&tiny'
+            mark_sign = _const_mark
 
             checker = MarkCheckFactory.get_checker(origin_file, mark_sign)
 
