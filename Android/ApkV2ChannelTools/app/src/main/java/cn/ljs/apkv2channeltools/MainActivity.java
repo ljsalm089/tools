@@ -8,6 +8,7 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import java.nio.charset.Charset;
 
 import cn.ljs.apkv2channeltools.utils.APKUtils;
 
@@ -30,9 +31,9 @@ public class MainActivity extends AppCompatActivity {
 
         frameLayout.addView(textView, params);
         try {
-            textView.setText(String.format("APP Channel : %s", APKUtils.getApkV2ChannelInfo(this)));
-        } catch (APKUtils.ChannelNotFoundException e) {
-            textView.setText("APP Channel not found!");
+            textView.setText(String.format("APP Signature Info: %s", new String(APKUtils.getApkV2SignatureInfo(this), Charset.forName("utf-8"))));
+        } catch (Exception e) {
+            textView.setText("get signature info error");
         }
 
         AppCompatTextView extraTv = new AppCompatTextView(this);
@@ -44,8 +45,8 @@ public class MainActivity extends AppCompatActivity {
         frameLayout.addView(extraTv, params);
 
         try {
-            extraTv.setText(String.format("APP Extra Info : %s", APKUtils.getApkExtraInfo(
-                    this, "channel")));
+            extraTv.setText(String.format("APP Extra Info : %s", new String(APKUtils.getApkExtraInfo(
+                    this, "channel"), Charset.forName("utf-8"))));
         } catch (APKUtils.ApkExtraInfoNotFoundException e) {
             extraTv.setText("APP Extra Info not found");
         }

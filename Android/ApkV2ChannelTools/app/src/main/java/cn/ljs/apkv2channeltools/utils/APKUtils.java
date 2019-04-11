@@ -42,10 +42,9 @@ public class APKUtils {
      * 获取使用v2签名的apk的渠道信息
      *
      * @param context
-     *
      * @return
      */
-    public static String getApkV2ChannelInfo(Context context) {
+    public static byte[] getApkV2ChannelInfo(Context context) {
         try {
             return getApkExtraInfoInSignatureBlock(context, APK_CHANNEL_BLOCK_ID);
         } catch (ApkExtraInfoNotFoundException e) {
@@ -53,7 +52,7 @@ public class APKUtils {
         }
     }
 
-    public static String getApkV2SignatureInfo(String filePath) {
+    public static byte[] getApkV2SignatureInfo(String filePath) {
         try {
             return getApkExtraInfoInSignatureBlock(filePath, APK_SIGNATURE_SCHEME_V2_BLOCK_ID);
         } catch (ApkExtraInfoNotFoundException e) {
@@ -65,10 +64,9 @@ public class APKUtils {
      * 获取apk v2的签名信息
      *
      * @param context
-     *
      * @return
      */
-    public static String getApkV2SignatureInfo(Context context) {
+    public static byte[] getApkV2SignatureInfo(Context context) {
         try {
             return getApkExtraInfoInSignatureBlock(context, APK_SIGNATURE_SCHEME_V2_BLOCK_ID);
         } catch (ApkExtraInfoNotFoundException e) {
@@ -78,11 +76,12 @@ public class APKUtils {
 
     /**
      * 获取签名信息里面的额外内容
+     *
      * @param context 对应上下文
-     * @param key 额外内容所对应的key
+     * @param key     额外内容所对应的key
      * @return 返回额外内容信息
      */
-    public static String getApkExtraInfo(Context context, String key) {
+    public static byte[] getApkExtraInfo(Context context, String key) {
         return getApkExtraInfoInSignatureBlock(context.getApplicationInfo().sourceDir,
                 convertStringToId(key));
     }
@@ -90,7 +89,7 @@ public class APKUtils {
 
     private static int convertStringToId(String key) {
         if (null == key) {
-            throw  new NullPointerException("key should not be null");
+            throw new NullPointerException("key should not be null");
         }
 
         byte[] data = key.getBytes(Charset.forName("utf-8"));
@@ -100,20 +99,20 @@ public class APKUtils {
         int shiftIndex = 0;
         while (shiftIndex < 4 && shiftIndex < data.length) {
             result |= (data[shiftIndex] << ((3 - shiftIndex) * 8));
-            shiftIndex ++;
+            shiftIndex++;
         }
         return result;
     }
 
     /**
      * 从apk的v2签名块中获取额外信息
-     * @param file 对应apk文件
+     *
+     * @param file   对应apk文件
      * @param signId 对应存储额外信息的id
      * @return 返回存储的额外信息
      */
-    private static String getApkExtraInfoInSignatureBlock(String file, int signId) {
+    private static byte[] getApkExtraInfoInSignatureBlock(String file, int signId) {
         File apkFile = new File(file);
-        String result = null;
 
         try {
             RandomAccessFile apk = new RandomAccessFile(apkFile, "r");
@@ -139,17 +138,17 @@ public class APKUtils {
 
             byte[] tmp = new byte[apkSignatureSchemeV2Block.limit() - apkSignatureSchemeV2Block.position()];
             apkSignatureSchemeV2Block.get(tmp, 0, tmp.length);
-            return new String(tmp, "UTF-8");
+            return tmp;
         } catch (FileNotFoundException e) {
             Log.e(TAG, String.format("read %s error, file not found", file),
                     e);
         } catch (IOException e) {
             Log.e(TAG, String.format("read %s error", file), e);
         }
-        return result;
+        return null;
     }
 
-    private static String getApkExtraInfoInSignatureBlock(Context context, int signId) {
+    private static byte[] getApkExtraInfoInSignatureBlock(Context context, int signId) {
         String filePath = context.getApplicationInfo().sourceDir;
         return getApkExtraInfoInSignatureBlock(filePath, signId);
     }
@@ -159,7 +158,6 @@ public class APKUtils {
      *
      * @param eocd       zip文件的eocd部数据
      * @param eocdOffset eocd部数据在zip文件中的偏移量
-     *
      * @return
      */
     private static long getCentralDirOffset(ByteBuffer eocd, long eocdOffset) {
@@ -302,7 +300,6 @@ public class APKUtils {
      * @param buffer 数据源
      * @param start  开始位置
      * @param end    结束位置
-     *
      * @return
      */
     private static ByteBuffer sliceFromTo(ByteBuffer buffer, int start, int end) {
@@ -338,7 +335,6 @@ public class APKUtils {
      *
      * @param source 原数据
      * @param size   数据大小
-     *
      * @return
      */
     private static ByteBuffer getByteBuffer(ByteBuffer source, int size) {
