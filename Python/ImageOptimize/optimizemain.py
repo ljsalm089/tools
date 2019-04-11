@@ -18,8 +18,6 @@ logging.basicConfig(level=logging.INFO, format='%(levelname)s\t\t%(asctime)s'
 
 local_reader = threading.local()
 
-_const_mark = b'mark&tiny'
-
 
 class PathFilter(object):
 
@@ -56,25 +54,40 @@ class TokenReader(Iterator):
         return next(self._iter)
 
 
-def optimize_file_in_directory(directory):
+def scan_all_file(start_directory):
+    """
+    scan all file in the directory
+    :param start_directory: the directory
+    :return:
+    """
+    verifier = PathFilter(_ignore_list)
+
+    file_list = []
+    file_list.extend([os.path.join(start_directory, x) for x in os.listdir(start_directory)
+                      if os.path.isfile(os.path.join(start_directory, x))
+                      and not verifier.filter(x)])
+    [file_list.extend(scan_all_file(x)) for x in os.listdir(start_directory)
+     if os.path.isdir(os.path.join(start_directory, x))
+     and not verifier.filter(x)]
+
+    return file_list
+
+
+def optimize_files(list):
     """
     optimze file in directory path
     :param directory: the directory
     :return: NoneType
     """
-    verifier = PathFilter(_ignore_list)
-    file_list = [os.path.join(directory, x) for x in os.listdir(directory)
-                 if os.path.isfile(os.path.join(directory, x))
-                 and not verifier.filter(x)]
 
     local_reader.reader = TokenReader(_token_list)
 
     token = next(local_reader.reader)
     index = 0
-    while index < len(file_list):
+    while index < len(list):
         try:
-            origin_file = file_list[index]
-            mark_sign = _const_mark
+            origin_file = list[index]
+            mark_sign = b'mark&tiny'
 
             checker = MarkCheckFactory.get_checker(origin_file, mark_sign)
 
@@ -107,20 +120,30 @@ def create_task_to_pool(pool, dir):
     :param dir: start directory
     :return: NoneType
     """
-    verifier = PathFilter(_ignore_list)
-    _ignore_list.clear()
-    _ignore_list.extend(verifier.valid_regular_list)
+    all_files = scan_all_file(dir)
 
-    child_dirs = [os.path.join(dir, x) for x in os.listdir(dir)
-                  if os.path.isdir(os.path.join(dir, x))
-                  and not verifier.filter(x)]
+    file_params = []
+    step = int(len(all_files) / len(pool.workers))
+    if step < 1:
+        step = 1
+
+    start = 0
+    end = start + step
+
+    try:
+        while end <= len(all_files):
+            file_params.append(all_files[start:end])
+            start = end
+            end = start + step
+    except:
+        pass
+
+    if start < len(all_files) - 1:
+        file_params.append(all_files[start:len(all_files)])
 
     logging.debug("create task and add to pool, in dir : %s" % dir)
-    task = threadpool.makeRequests(optimize_file_in_directory, [dir])
+    task = threadpool.makeRequests(optimize_files, file_params)
     [pool.putRequest(x) for x in task]
-
-    for x in child_dirs:
-        create_task_to_pool(pool, x)
 
 
 def read_config_file(file_name):
