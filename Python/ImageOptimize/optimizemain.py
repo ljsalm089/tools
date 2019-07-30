@@ -67,7 +67,7 @@ def scan_all_file(start_directory):
     file_list.extend([os.path.join(start_directory, x) for x in os.listdir(start_directory)
                       if os.path.isfile(os.path.join(start_directory, x))
                       and not verifier.filter(x)])
-    [file_list.extend(scan_all_file(x)) for x in os.listdir(start_directory)
+    [file_list.extend(scan_all_file(os.path.join(start_directory, x))) for x in os.listdir(start_directory)
      if os.path.isdir(os.path.join(start_directory, x))
      and not verifier.filter(x)]
 
